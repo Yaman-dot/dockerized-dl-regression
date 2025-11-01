@@ -3,12 +3,17 @@ import torch.nn as nn
 from torch.utils.data import DataLoader, TensorDataset
 from sklearn.model_selection import train_test_split
 from tqdm import tqdm
-
+import pickle
+import os
 
 class ModelTrainer():
-    def __init__(self, dataset, test_size = 0.2, batch_size=32, lr=1e-4):
+    def __init__(self, dataset, test_size = 0.2, batch_size=32):
+        #maybe add df.to_numpy() here
+        
         #split the data
-        self.X_train, self.X_test, self.y_train, self.y_test = self.preprocessData(data=dataset, test_size=test_size)
+        self.test_size = test_size
+        self.batch_size = batch_size
+        self.X_train, self.X_test, self.y_train, self.y_test = self.preprocess_data(data=dataset, test_size=self.test_size)
 
         #make sure its a tensor
         self.convert_to_tensors()
@@ -20,7 +25,9 @@ class ModelTrainer():
         self.train_dataset = TensorDataset(self.X_train_tensor, self.y_train_tensor)
         self.test_dataset = TensorDataset(self.X_test_tensor, self.y_test_tensor)
     def preprocess_data(self, data, test_size):
-        X_train, X_test, y_train, y_test = train_test_split(self.data, test_size=self.test_size, random_state=42)
+        X = data[:, :-1]  # all columns except the last (features)
+        y = data[:, -1:]  # last column (target)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
         return X_train, X_test, y_train, y_test
 
     def convert_to_tensors(self):
@@ -51,10 +58,13 @@ class ModelTrainer():
             batch_size=batch_size,
             shuffle=True
         )
-    def train(self, model, lr, epochs, batch_size, device):
+    def train(self,device, model, lr, epochs, batch_size=32):
         loss_fn = nn.MSELoss()
-        optimizer = torch.optim.SGD(model.parameters(), lr=lr)
+        optimizer = torch.optim.Adam(model.parameters(), lr=lr)
         
+        os.makedirs("checkpoints", exist_ok=True)
+        best_loss = float('inf')
+
         print(f"Starting training for {epochs} epochs \n")
         model.to(device)
         for epoch in range(epochs):
@@ -90,4 +100,11 @@ class ModelTrainer():
                     test_loss += loss.item()
 
             avg_test_loss = test_loss / len(self.test_dataloader)
+            if avg_test_loss < best_loss:
+                best_loss = avg_test_loss
+                checkpoint_path = f"checkpoints/model_epoch_{epoch+1}.pkl"
+                with open(checkpoint_path, "wb") as f:
+                    pickle.dump(model.state_dict(), f)
+                print(f"Saved checkpoint: {checkpoint_path}")
+            
             print(f"Epoch {epoch+1} completed. Final Loss: {loss.item():.4f}")
