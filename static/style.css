@@ -1,0 +1,90 @@
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: #f9fafb;
+    color: #222;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 1rem 2rem;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+}
+
+nav h1 {
+    font-size: 1.4rem;
+}
+
+nav .links a {
+    margin-left: 1rem;
+    text-decoration: none;
+    color: #444;
+    font-weight: 500;
+}
+
+nav .links a.active, nav .links a:hover {
+    color: #007bff;
+}
+
+main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 70vh;
+    flex-direction: column;
+    text-align: center;
+}
+
+.hero h2 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.btn {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.7rem 1.5rem;
+    background-color: #007bff;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+}
+
+.form-section input, button {
+    display: block;
+    margin: 0.5rem auto;
+    padding: 0.6rem;
+    width: 250px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+button {
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+button:hover {
+    background: #005fc1;
+}
+
+#result {
+    margin-top: 1rem;
+}
+
+.prediction {
+    font-size: 1.4rem;
+    color: #007bff;
+}
+
+footer {
+    text-align: center;
+    padding: 1rem;
+    color: #555;
+    font-size: 0.9rem;
+}
