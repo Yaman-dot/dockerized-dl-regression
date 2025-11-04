@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ML Demo | Inference</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <nav>
+        <h1>ML Demo</h1>
+        <div class="links">
+            <a href="/home">Home</a>
+            <a href="/inference" class="active">Inference</a>
+        </div>
+    </nav>
+
+    <main>
+        <section class="form-section">
+            <h2>Run Model Inference</h2>
+            <form id="predictForm">
+                <input type="number" id="age" placeholder="Age" required>
+                <input type="number" id="bmi" placeholder="BMI" required>
+                <input type="number" id="sex" placeholder="Sex (0=female,1=male)" required>
+                <input type="number" id="smoker" placeholder="Smoker (0=no,1=yes)" required>
+                <input type="number" id="region" placeholder="Region (0–3)" required>
+                <button type="submit">Predict</button>
+            </form>
+
+            <div id="result"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Created by <strong>Yaman Abulaban</strong> © 2025</p>
+    </footer>
+
+    <script>
+        document.getElementById("predictForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const payload = {
+                age: parseFloat(document.getElementById("age").value),
+                bmi: parseFloat(document.getElementById("bmi").value),
+                sex: parseInt(document.getElementById("sex").value),
+                smoker: parseInt(document.getElementById("smoker").value),
+                region: parseInt(document.getElementById("region").value)
+            };
+
+            const response = await fetch("/predict", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+            document.getElementById("result").innerHTML = `
+                <h3>Predicted Charges:</h3>
+                <p class="prediction">$${result.predicted_charges.toFixed(2)}</p>
+            `;
+        });
+    </script>
+</body>
+</html>
