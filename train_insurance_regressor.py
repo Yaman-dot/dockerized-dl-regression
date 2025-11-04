@@ -1,6 +1,7 @@
 from src.model import RegressionModel
 from src.train import ModelTrainer
 from sklearn.preprocessing import StandardScaler
+import pickle
 import torch
 import pandas as pd
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -26,6 +27,13 @@ def main():
     model = RegressionModel(input_dim)
     
     trainer.train(device=device, model=model, lr=1e-4, epochs=50, batch_size=32)
+    print("Finished Training Model, Saving Scalers")
+    
+    with open(r"checkpoints\scalerX.pkl", "wb") as f:
+        pickle.dump(scaler_X, f)
+    with open(r"checkpoints\scalerY.pkl", "wb") as f:
+        pickle.dump(scaler_y, f)
+
     
 if __name__ == "__main__":
     main()

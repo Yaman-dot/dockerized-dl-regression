@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ML Demo | Inference</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .container {
+            max-width: 32rem;
+        }
+        /* UPDATED NAV STYLES */
+        nav {
+            background-color: #ffffff; /* White background */
+            border-bottom: 1px solid #e5e7eb; /* Light border */
+            color: #1f2937; /* Dark text */
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+        }
+        nav h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        .links a {
+            margin-left: 1.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.2s, color 0.2s;
+            color: #4b5563; /* Gray text for links */
+            text-decoration: none;
+        }
+        .links a:hover {
+            color: #4f46e5; /* Indigo on hover */
+            background-color: #f5f3ff; /* Light purple background on hover */
+        }
+        .links a.active {
+            color: #4f46e5; /* Active link is Indigo */
+            font-weight: 600;
+            background-color: #eef2ff; /* Very light indigo background for active link */
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- Navigation Bar -->
+    <nav>
+        <h1>ML Demo</h1>
+        <div class="links text-sm font-medium">
+            <a href="/">Home</a>
+            <a href="/predict" class="active">Predict</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow flex items-center justify-center p-4">
+        <div class="container bg-white shadow-2xl rounded-xl p-8 space-y-6">
+            <h2 class="text-2xl font-bold text-gray-800 text-center">Run Model Inference</h2>
+            <p class="text-sm text-gray-600 text-center">Enter client details to estimate annual insurance charges.</p>
+            
+            <!-- Result Display (Placeholder for GET /predict) -->
+            {% if prediction is not none %}
+            <div id="result" class="bg-indigo-50 border-l-4 border-indigo-500 text-indigo-800 p-4 rounded-lg">
+                <h3 class="font-bold text-lg">Predicted Charges:</h3>
+                <p class="text-2xl font-extrabold mt-1">${{ prediction }}</p>
+            </div>
+            {% endif %}
+
+            <!-- Form submission via standard POST to the FastAPI endpoint -->
+            <form method="POST" action="/predict" class="space-y-4">
+                
+                <!-- Age & BMI (Numerical Inputs) -->
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="number" step="0.1" name="age" placeholder="Age (e.g., 30)" required
+                           class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                    <input type="number" step="0.01" name="bmi" placeholder="BMI (e.g., 25.5)" required
+                           class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                
+                <!-- Children (Numerical Input) -->
+                <input type="number" step="1" name="children" placeholder="Number of Children (required)" required
+                       class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+
+                <!-- Sex (Dropdown for easier, less error-prone input) -->
+                <select name="sex" required
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-white">
+                    <option value="" disabled selected>Select Sex</option>
+                    <option value="female">Female (0)</option>
+                    <option value="male">Male (1)</option>
+                </select>
+
+                <!-- Smoker (Dropdown) -->
+                <select name="smoker" required
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-white">
+                    <option value="" disabled selected>Smoker Status</option>
+                    <option value="no">Non-Smoker (0)</option>
+                    <option value="yes">Smoker (1)</option>
+                </select>
+
+                <!-- Region (Dropdown) -->
+                <select name="region" required
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-white">
+                    <option value="" disabled selected>Select Region</option>
+                    <option value="southeast">Southeast (0)</option>
+                    <option value="southwest">Southwest (1)</option>
+                    <option value="northeast">Northeast (2)</option>
+                    <option value="northwest">Northwest (3)</option>
+                </select>
+
+                <button type="submit"
+                        class="w-full py-3 px-4 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition duration-200 shadow-md">
+                    Predict Charges
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-100 text-gray-600 text-center p-3 text-sm mt-auto">
+        <p>Created by <strong>Yaman Abulaban</strong> © 2025</p>
+    </footer>
+</body>
+</html>

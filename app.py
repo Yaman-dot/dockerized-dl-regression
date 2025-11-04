@@ -39,13 +39,10 @@ except Exception as e:
 async def home(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
-@app.get("/inference", response_class=HTMLResponse)
-async def inference(request: Request):
-    return templates.TemplateResponse("inference.html", {"request": request})
-
 @app.get("/predict", response_class=HTMLResponse)
 async def predict_form(request: Request):
-    return templates.TemplateResponse("predict.html", {"request" : request})
+    return templates.TemplateResponse("predict.html", {"request": request})
+
 
 @app.post("/predict", response_class=HTMLResponse)
 async def predict_result(request: Request,
