@@ -4,6 +4,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sklearn.preprocessing import StandardScaler
 from src.model import RegressionModel
+from src.database import SessionLocal, Prediction
+from datetime import datetime
 import numpy as np
 import torch
 import pickle
@@ -29,7 +31,7 @@ try:
         scaler_y = pickle.load(f)
         
 except FileNotFoundError as e:
-    print(f"Error loading required files: {e}. Ensure model.pkl, scaler_X.pkl, and scaler_y.pkl are present.")
+    print(f"Error loading required files: {e}. Make sure that model.pkl, scaler_X.pkl, and scaler_y.pkl are present.")
 except Exception as e:
     print(f"An unexpected error occurred during model loading: {e}")
 
@@ -84,6 +86,25 @@ async def predict_result(request: Request,
     with torch.inference_mode():
         y_pred = model(X_tensor).numpy()
     y_pred_scaled = scaler_y.inverse_transform(y_pred.reshape(-1,1))
+    pred_value = float(y_pred_scaled[0][0])
+    #Save to PostgreSQL
+    db = SessionLocal()
+    new_record = Prediction(
+        age=age,
+        bmi=bmi,
+        sex=sex,
+        children=children,
+        smoker=smoker,
+        region=region,
+        predicted_cost=pred_value,
+        timestamp=datetime.now()
+    )
+    db.add(new_record)
+    db.commit()
+    db.refresh(new_record)
+    db.close()
+    
+    #Return
     return templates.TemplateResponse(
         "predict.html",
         {
@@ -96,4 +117,11 @@ async def predict_result(request: Request,
             "region": region
         }
     )
-    
+
+
+@app.get("/records")
+async def get_records():
+    db = SessionLocal()
+    data = db.query(Prediction).all()
+    db.close()
+    return data
