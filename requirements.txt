@@ -8,3 +8,5 @@ numpy
 scikit-learn
 torch
 tqdm
+python-dotenv
+uvicorn

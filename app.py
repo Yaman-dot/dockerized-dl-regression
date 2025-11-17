@@ -10,6 +10,13 @@ import numpy as np
 import torch
 import pickle
 
+
+
+# temporarily changes:
+from src.database import Base, engine
+Base.metadata.create_all(bind=engine)
+
+
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
